@@ -1,0 +1,2 @@
+include ':app', ':libwrapper'
+rootProject.name='jvmtiwrapper-android'
