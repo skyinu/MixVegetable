@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.10)
+option(OPEN_LOG "log switch" ON)
+configure_file(app_log_config.h.in app_log_config.h)
+message("----------binary path-------------")
+message(${CMAKE_CURRENT_BINARY_DIR})
+add_library(applog STATIC app_log.c)
+include_directories(applog ${CMAKE_CURRENT_BINARY_DIR})

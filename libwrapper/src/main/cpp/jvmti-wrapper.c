@@ -4,10 +4,12 @@
 
 #include <jni.h>
 #include"string.h"
-#include "android/log.h"
+#include "applog/app_log.h"
+
+#define LOG_TAG "TAG_WRAPPER"
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
-    __android_log_print(ANDROID_LOG_INFO, "wrapper", "on library load");
+    logi(LOG_TAG, "on library load");
     return JNI_VERSION_1_6;
 }
 
