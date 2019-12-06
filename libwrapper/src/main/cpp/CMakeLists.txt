@@ -6,4 +6,4 @@ target_link_libraries(jvmti_wrapper
         android
         log
         applog)
-target_include_directories(jvmti_wrapper PUBLIC applog)
+target_include_directories(jvmti_wrapper PUBLIC ${PROJECT_SOURCE_DIR}/applog)
