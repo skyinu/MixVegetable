@@ -10,6 +10,30 @@
 
 #define LOG_TAG "TAG_WRAPPER"
 #define MAX_LOG_LENGTH 500
+#define GENERAL_LOG_LENGTH 200
+
+jvmtiEnv *createJvmTiEnv(JavaVM *vm, jint version) {
+    jvmtiEnv *jvmti;
+    jint result = (*vm)->GetEnv(vm, (void **) &jvmti, version);
+    if (result != JNI_OK) {
+        loge(LOG_TAG, "occur errors when create jvm ti env");
+        return NULL;
+    }
+    return jvmti;
+}
+
+jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
+    jvmtiError error;
+    jvmtiCapabilities capa;
+    //consider to set t0 0 and set to 1 case by case
+    (void) memset(&capa, 1, sizeof(jvmtiCapabilities));
+    error = (*jvmti)->AddCapabilities(jvmti, &capa);
+    if (error != NULL) {
+        char log[GENERAL_LOG_LENGTH];
+        sprintf(log, "something not support here, error code is %d", error);
+        loge(LOG_TAG, log);
+    }
+}
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     logi(LOG_TAG, "on library load");
@@ -22,6 +46,8 @@ JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void *reserved)
     jint maxAppend = MAX_LOG_LENGTH - strlen(log) - 1;
     logi(LOG_TAG, strncat(log, options, (size_t) maxAppend));
     free(log);
+    jvmtiEnv *jvmti = createJvmTiEnv(vm, JVMTI_VERSION_1_2);
+    addAndCheckCapabilities(jvmti);
     return JNI_OK;
 }
 

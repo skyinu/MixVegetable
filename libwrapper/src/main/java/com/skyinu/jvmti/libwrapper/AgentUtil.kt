@@ -17,6 +17,10 @@ object AgentUtil {
             copyDestPath.mkdir()
         }
         val copyAgentSoPath = "${copyDestPath}${File.separator}${agentSoName}.so"
+        val copyAgentSoFile = File(copyAgentSoPath)
+        if (copyAgentSoFile.exists()) {
+            copyAgentSoFile.delete()
+        }
         Files.copy(Paths.get(agentPath), Paths.get(copyAgentSoPath))
         Debug.attachJvmtiAgent(copyAgentSoPath, options, classLoader)
     }
