@@ -53,6 +53,13 @@ void configEvent(jvmtiEnv *jvmti) {
 void configCallback(jvmtiEnv *jvmti) {
     jvmtiEventCallbacks callbacks;
     (void) memset(&callbacks, 0, sizeof(callbacks));
+    callbacks.VMInit = &wrappperVMInit;
+    callbacks.VMDeath = &wrapperVMDeath;
+    callbacks.ThreadStart = &wrapperThreadStart;
+    callbacks.ThreadEnd = &wrapperThreadEnd;
+    callbacks.ClassFileLoadHook = &wrapperClassFileLoadHook;
+    callbacks.ClassLoad = &wrapperClassLoad;
+    callbacks.ClassPrepare = &wrapperClassPrepare;
     callbacks.MethodEntry = &wrapperMethodEntry;
     jvmtiError error = (*jvmti)->SetEventCallbacks(jvmti, &callbacks, (jint) sizeof(callbacks));
     if (error != NULL) {
@@ -86,6 +93,56 @@ void wrapperMethodEntry(jvmtiEnv *jvmti_env,
                         jthread thread,
                         jmethodID method) {
     logi(LOG_TAG, "wrapperMethodEntry");
+}
+
+void wrappperVMInit(jvmtiEnv *jvmti_env,
+                    JNIEnv *jni_env,
+                    jthread thread) {
+    logi(LOG_TAG, "wrappperVMInit");
+}
+
+void wrapperVMDeath(jvmtiEnv *jvmti_env,
+                    JNIEnv *jni_env) {
+    logi(LOG_TAG, "wrapperVMDeath");
+}
+
+void wrapperThreadStart(jvmtiEnv *jvmti_env,
+                        JNIEnv *jni_env,
+                        jthread thread) {
+    logi(LOG_TAG, "wrapperThreadStart");
+}
+
+void wrapperThreadEnd(jvmtiEnv *jvmti_env,
+                      JNIEnv *jni_env,
+                      jthread thread) {
+    logi(LOG_TAG, "wrapperThreadEnd");
+}
+
+void wrapperClassFileLoadHook(jvmtiEnv *jvmti_env,
+                              JNIEnv *jni_env,
+                              jclass class_being_redefined,
+                              jobject loader,
+                              const char *name,
+                              jobject protection_domain,
+                              jint class_data_len,
+                              const unsigned char *class_data,
+                              jint *new_class_data_len,
+                              unsigned char **new_class_data) {
+    logi(LOG_TAG, "wrapperClassFileLoadHook");
+}
+
+void wrapperClassLoad(jvmtiEnv *jvmti_env,
+                      JNIEnv *jni_env,
+                      jthread thread,
+                      jclass klass) {
+    logi(LOG_TAG, "wrapperClassLoad");
+}
+
+void wrapperClassPrepare(jvmtiEnv *jvmti_env,
+                         JNIEnv *jni_env,
+                         jthread thread,
+                         jclass klass) {
+    logi(LOG_TAG, "wrapperClassPrepare");
 }
 //callback area end
 
