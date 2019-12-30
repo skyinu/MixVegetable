@@ -7,6 +7,7 @@
 #include "applog/app_log.h"
 #include "jvmti-wrapper.h"
 #include "malloc.h"
+#include "appbridge/app_bridge.h"
 
 #define LOG_TAG "TAG_WRAPPER"
 #define MAX_LOG_LENGTH 500
