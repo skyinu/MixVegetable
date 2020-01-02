@@ -8,6 +8,7 @@
 #include "jvmti-wrapper.h"
 #include "malloc.h"
 #include "appbridge/app_bridge.h"
+#include "jvmti.h"
 
 #define LOG_TAG "TAG_WRAPPER"
 #define MAX_LOG_LENGTH 500
@@ -100,16 +101,11 @@ JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void *reserved)
     addAndCheckCapabilities(jvmti);
     configEvent(jvmti);
     configCallback(jvmti);
+    setUpEnv(jvmti);
     return JNI_OK;
 }
 
 //callback area start
-void wrapperMethodEntry(jvmtiEnv *jvmti_env,
-                        JNIEnv *jni_env,
-                        jthread thread,
-                        jmethodID method) {
-    logi(LOG_TAG, "wrapperMethodEntry");
-}
 
 void wrappperVMInit(jvmtiEnv *jvmti_env,
                     JNIEnv *jni_env,
@@ -126,6 +122,7 @@ void wrapperThreadStart(jvmtiEnv *jvmti_env,
                         JNIEnv *jni_env,
                         jthread thread) {
     logi(LOG_TAG, "wrapperThreadStart");
+    notifyThreadStart(jni_env, thread);
 }
 
 void wrapperThreadEnd(jvmtiEnv *jvmti_env,
@@ -161,12 +158,24 @@ void wrapperClassPrepare(jvmtiEnv *jvmti_env,
     logi(LOG_TAG, "wrapperClassPrepare");
 }
 
+void wrapperMethodEntry(jvmtiEnv *jvmti_env,
+                        JNIEnv *jni_env,
+                        jthread thread,
+                        jmethodID method) {
+//    logi(LOG_TAG, "wrapperMethodEntry");
+    char *methodName;
+    jclass declareClass;
+    (*jvmti_env)->GetMethodName(jvmti_env, method, &methodName, NULL, NULL);
+    (*jvmti_env)->GetMethodDeclaringClass(jvmti_env, method, &declareClass);
+//    logi(LOG_TAG, methodName);
+}
+
 void wrapperMethodExit(jvmtiEnv *jvmti_env,
                        JNIEnv *jni_env,
                        jthread thread,
                        jmethodID method,
                        jboolean was_popped_by_exception,
-                       jvalue return_value){
+                       jvalue return_value) {
     logi(LOG_TAG, "wrapperMethodExit");
 }
 
@@ -175,7 +184,7 @@ void wrapperNativeMethodBind(jvmtiEnv *jvmti_env,
                              jthread thread,
                              jmethodID method,
                              void *address,
-                             void **new_address_ptr){
+                             void **new_address_ptr) {
     logi(LOG_TAG, "wrapperNativeMethodBind");
 }
 
@@ -185,24 +194,24 @@ void wrapperCompiledMethodLoad(jvmtiEnv *jvmti_env,
                                const void *code_addr,
                                jint map_length,
                                const jvmtiAddrLocationMap *map,
-                               const void *compile_info){
+                               const void *compile_info) {
     logi(LOG_TAG, "wrapperCompiledMethodLoad");
 }
 
 void wrapperCompiledMethodUnload(jvmtiEnv *jvmti_env,
                                  jmethodID method,
-                                 const void *code_addr){
+                                 const void *code_addr) {
     logi(LOG_TAG, "wrapperCompiledMethodUnload");
 }
 
 void wrapperDynamicCodeGenerated(jvmtiEnv *jvmti_env,
                                  const char *name,
                                  const void *address,
-                                 jint length){
+                                 jint length) {
     logi(LOG_TAG, "wrapperDynamicCodeGenerated");
 }
 
-void wrapperDataDumpRequest(jvmtiEnv *jvmti_env){
+void wrapperDataDumpRequest(jvmtiEnv *jvmti_env) {
     logi(LOG_TAG, "wrapperDataDumpRequest");
 }
 
@@ -210,7 +219,7 @@ void wrapperMonitorWait(jvmtiEnv *jvmti_env,
                         JNIEnv *jni_env,
                         jthread thread,
                         jobject object,
-                        jlong timeout){
+                        jlong timeout) {
     logi(LOG_TAG, "wrapperMonitorWait");
 }
 
@@ -218,21 +227,21 @@ void wrapperMonitorWaited(jvmtiEnv *jvmti_env,
                           JNIEnv *jni_env,
                           jthread thread,
                           jobject object,
-                          jboolean timed_out){
+                          jboolean timed_out) {
     logi(LOG_TAG, "wrapperMonitorWaited");
 }
 
 void wrapperMonitorContendedEnter(jvmtiEnv *jvmti_env,
                                   JNIEnv *jni_env,
                                   jthread thread,
-                                  jobject object){
+                                  jobject object) {
     logi(LOG_TAG, "wrapperMonitorContendedEnter");
 }
 
 void wrapperMonitorContendedEntered(jvmtiEnv *jvmti_env,
                                     JNIEnv *jni_env,
                                     jthread thread,
-                                    jobject object){
+                                    jobject object) {
     logi(LOG_TAG, "wrapperMonitorContendedEntered");
 }
 
@@ -240,19 +249,19 @@ void wrapperResourceExhausted(jvmtiEnv *jvmti_env,
                               JNIEnv *jni_env,
                               jint flags,
                               const void *reserved,
-                              const char *description){
+                              const char *description) {
     logi(LOG_TAG, "wrapperResourceExhausted");
 }
 
-void wrapperGarbageCollectionStart(jvmtiEnv *jvmti_env){
+void wrapperGarbageCollectionStart(jvmtiEnv *jvmti_env) {
     logi(LOG_TAG, "wrapperGarbageCollectionStart");
 }
 
-void wrapperGarbageCollectionFinish(jvmtiEnv *jvmti_env){
+void wrapperGarbageCollectionFinish(jvmtiEnv *jvmti_env) {
     logi(LOG_TAG, "wrapperGarbageCollectionFinish");
 }
 
-void wrapperObjectFree(jvmtiEnv *jvmti_env, jlong tag){
+void wrapperObjectFree(jvmtiEnv *jvmti_env, jlong tag) {
     logi(LOG_TAG, "wrapperObjectFree");
 }
 
@@ -261,7 +270,7 @@ void wrapperVMObjectAlloc(jvmtiEnv *jvmti_env,
                           jthread thread,
                           jobject object,
                           jclass object_klass,
-                          jlong size){
+                          jlong size) {
     logi(LOG_TAG, "wrapperVMObjectAlloc");
 }
 //callback area end
