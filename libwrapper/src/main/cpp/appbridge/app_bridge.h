@@ -9,8 +9,10 @@
 
 #include "../jvmti.h"
 
-void setUpEnv(jvmtiEnv *jvmti_env);
-
-void setUpJNIEnv(JNIEnv *jni_env);
+void setUpEnv(jvmtiEnv *jvmti_env, JNIEnv *jni_env);
 
 void notifyThreadStart(JNIEnv *jni_env, jthread thread);
+
+void notifyThreadEnd(JNIEnv *jni_env, jthread thread);
+
+void notifyClassLoad(JNIEnv *jni_env, jthread thread, jclass klass);

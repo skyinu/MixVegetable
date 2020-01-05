@@ -5,14 +5,13 @@ import android.content.Context
 import com.skyinu.jvmti.libwrapper.AgentUtil
 
 class AppApplication : Application() {
-    companion object{
+    companion object {
         lateinit var APPCONTEXT: Application
     }
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        System.loadLibrary("jvmti_wrapper")
-        AgentUtil.loadAgent(this, "jvmti_wrapper", "this is options/**/")
+        AgentUtil.loadAgent(this, "jvmti_wrapper")
     }
 
     override fun onCreate() {

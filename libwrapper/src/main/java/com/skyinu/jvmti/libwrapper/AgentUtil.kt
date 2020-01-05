@@ -8,7 +8,7 @@ import java.nio.file.Paths
 
 object AgentUtil {
     private const val AGENT_SO_DIRECTORY = "agent"
-    fun loadAgent(context: Context, agentSoName: String, options: String) {
+    fun loadAgent(context: Context, agentSoName: String) {
         val classLoader = context.classLoader
         val findLibrary = classLoader.javaClass.methods.find { it.name == "findLibrary" }
         val agentPath = findLibrary!!.invoke(classLoader, agentSoName) as String
@@ -22,6 +22,6 @@ object AgentUtil {
             copyAgentSoFile.delete()
         }
         Files.copy(Paths.get(agentPath), Paths.get(copyAgentSoPath))
-        Debug.attachJvmtiAgent(copyAgentSoPath, options, classLoader)
+        Debug.attachJvmtiAgent(copyAgentSoPath, context.packageResourcePath, classLoader)
     }
 }

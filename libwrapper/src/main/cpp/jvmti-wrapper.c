@@ -92,7 +92,6 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
-    setUpJNIEnv(env);
     return JNI_VERSION_1_6;
 }
 
@@ -106,7 +105,12 @@ JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void *reserved)
     addAndCheckCapabilities(jvmti);
     configEvent(jvmti);
     configCallback(jvmti);
-    setUpEnv(jvmti);
+    JNIEnv *env;
+    if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    }
+    (*jvmti)->AddToBootstrapClassLoaderSearch(jvmti, options);
+    setUpEnv(jvmti, env);
     return JNI_OK;
 }
 
@@ -134,6 +138,7 @@ void wrapperThreadEnd(jvmtiEnv *jvmti_env,
                       JNIEnv *jni_env,
                       jthread thread) {
     logi(LOG_TAG, "wrapperThreadEnd");
+    notifyThreadEnd(jni_env, thread);
 }
 
 void wrapperClassFileLoadHook(jvmtiEnv *jvmti_env,
@@ -153,7 +158,8 @@ void wrapperClassLoad(jvmtiEnv *jvmti_env,
                       JNIEnv *jni_env,
                       jthread thread,
                       jclass klass) {
-//    logi(LOG_TAG, "wrapperClassLoad");
+    logi(LOG_TAG, "wrapperClassLoad");
+    notifyClassLoad(jni_env, thread, klass);
 }
 
 void wrapperClassPrepare(jvmtiEnv *jvmti_env,
