@@ -88,6 +88,11 @@ void configCallback(jvmtiEnv *jvmti) {
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     logi(LOG_TAG, "on library load");
+    JNIEnv *env;
+    if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
+        return JNI_ERR;
+    }
+    setUpJNIEnv(env);
     return JNI_VERSION_1_6;
 }
 
@@ -141,21 +146,21 @@ void wrapperClassFileLoadHook(jvmtiEnv *jvmti_env,
                               const unsigned char *class_data,
                               jint *new_class_data_len,
                               unsigned char **new_class_data) {
-    logi(LOG_TAG, "wrapperClassFileLoadHook");
+//    logi(LOG_TAG, "wrapperClassFileLoadHook");
 }
 
 void wrapperClassLoad(jvmtiEnv *jvmti_env,
                       JNIEnv *jni_env,
                       jthread thread,
                       jclass klass) {
-    logi(LOG_TAG, "wrapperClassLoad");
+//    logi(LOG_TAG, "wrapperClassLoad");
 }
 
 void wrapperClassPrepare(jvmtiEnv *jvmti_env,
                          JNIEnv *jni_env,
                          jthread thread,
                          jclass klass) {
-    logi(LOG_TAG, "wrapperClassPrepare");
+//    logi(LOG_TAG, "wrapperClassPrepare");
 }
 
 void wrapperMethodEntry(jvmtiEnv *jvmti_env,

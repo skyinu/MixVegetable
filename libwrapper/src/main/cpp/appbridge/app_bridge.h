@@ -11,4 +11,6 @@
 
 void setUpEnv(jvmtiEnv *jvmti_env);
 
+void setUpJNIEnv(JNIEnv *jni_env);
+
 void notifyThreadStart(JNIEnv *jni_env, jthread thread);
