@@ -4,14 +4,52 @@
 
 #include "app_bridge.h"
 #include "../applog/app_log.h"
+#include "pthread.h"
+#include "malloc.h"
 
 #define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
 #define BRIDGE_LOG_TAG "TAG_WRAPPER"
+
+typedef struct Node {
+    short msgType;
+    void *msg;
+    struct Node *prev;
+    struct Node *next;
+} Node;
+
+JavaVM *globalVm;
 jvmtiEnv *globalJvmtiEnv;
+Node *head, *tail;
 jclass theBridgeClass = NULL;
 jmethodID onThreadStart;
 jmethodID onThreadEnd;
 jmethodID onClassLoad;
+
+void addNode(Node node) {
+    Node *preTail = tail->prev;
+    preTail->next = &node;
+    node.prev = preTail;
+    node.next = tail;
+}
+
+Node getNode() {
+    if (head->next == tail) {
+        return NULL;
+    }
+    Node *next = head->next;
+    head->next = next->next;
+    next->next->prev = head;
+    return *next;
+}
+
+void *handleMessages(void *args) {
+    logi(BRIDGE_LOG_TAG, "work thread start");
+    JNIEnv *jni_env;
+    (*globalVm)->AttachCurrentThread(globalVm, &jni_env, NULL);
+    Node current = getNode();
+    (*globalVm)->DetachCurrentThread(globalVm);
+    pthread_exit(NULL);
+}
 
 void initBridgeConfig(JNIEnv *jni_env) {
     theBridgeClass = (*jni_env)->NewGlobalRef(jni_env,
@@ -28,10 +66,19 @@ void initBridgeConfig(JNIEnv *jni_env) {
                                                 theBridgeClass,
                                                 "onClassLoad",
                                                 "(Ljava/lang/String;Ljava/lang/Class;)V");
+    pthread_t workThread;
+    pthread_create(&workThread, NULL, &handleMessages, NULL);
 }
 
-void setUpEnv(jvmtiEnv *jvmti_env, JNIEnv *jni_env) {
+void setUpEnv(JavaVM *vm, jvmtiEnv *jvmti_env, JNIEnv *jni_env) {
+    globalVm = vm;
     globalJvmtiEnv = jvmti_env;
+    head = malloc(sizeof(Node));
+    tail = malloc(sizeof(Node));
+    head->prev = NULL;
+    head->next = tail;
+    tail->prev = head;
+    tail->next = NULL;
     initBridgeConfig(jni_env);
 }
 

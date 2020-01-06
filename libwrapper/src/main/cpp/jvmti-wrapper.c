@@ -110,7 +110,7 @@ JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void *reserved)
         return JNI_ERR;
     }
     (*jvmti)->AddToBootstrapClassLoaderSearch(jvmti, options);
-    setUpEnv(jvmti, env);
+    setUpEnv(vm, jvmti, env);
     return JNI_OK;
 }
 

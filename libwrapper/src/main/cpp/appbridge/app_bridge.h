@@ -9,7 +9,7 @@
 
 #include "../jvmti.h"
 
-void setUpEnv(jvmtiEnv *jvmti_env, JNIEnv *jni_env);
+void setUpEnv(JavaVM *vm, jvmtiEnv *jvmti_env, JNIEnv *jni_env);
 
 void notifyThreadStart(JNIEnv *jni_env, jthread thread);
 
