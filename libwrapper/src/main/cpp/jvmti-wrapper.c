@@ -158,7 +158,7 @@ void wrapperClassLoad(jvmtiEnv *jvmti_env,
                       JNIEnv *jni_env,
                       jthread thread,
                       jclass klass) {
-    logi(LOG_TAG, "wrapperClassLoad");
+//    logi(LOG_TAG, "wrapperClassLoad");
     notifyClassLoad(jni_env, thread, klass);
 }
 
