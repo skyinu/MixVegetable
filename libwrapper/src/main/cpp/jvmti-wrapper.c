@@ -29,7 +29,6 @@ jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
     jvmtiError error;
     jvmtiCapabilities capa;
     //consider to set t0 0 and set to 1 case by case
-    (void) memset(&capa, 1, sizeof(jvmtiCapabilities));
     error = (*jvmti)->AddCapabilities(jvmti, &capa);
     if (error != NULL) {
         char log[GENERAL_LOG_LENGTH];
@@ -175,11 +174,7 @@ void wrapperMethodEntry(jvmtiEnv *jvmti_env,
                         jthread thread,
                         jmethodID method) {
 //    logi(LOG_TAG, "wrapperMethodEntry");
-    char *methodName;
-    jclass declareClass;
-    (*jvmti_env)->GetMethodName(jvmti_env, method, &methodName, NULL, NULL);
-    (*jvmti_env)->GetMethodDeclaringClass(jvmti_env, method, &declareClass);
-//    logi(LOG_TAG, methodName);
+    notifyMethodEntry(thread, method);
 }
 
 void wrapperMethodExit(jvmtiEnv *jvmti_env,
@@ -266,15 +261,18 @@ void wrapperResourceExhausted(jvmtiEnv *jvmti_env,
 }
 
 void wrapperGarbageCollectionStart(jvmtiEnv *jvmti_env) {
-    logi(LOG_TAG, "wrapperGarbageCollectionStart");
+//    logi(LOG_TAG, "wrapperGarbageCollectionStart");
+    notifyGarbageCollectionStart();
 }
 
 void wrapperGarbageCollectionFinish(jvmtiEnv *jvmti_env) {
-    logi(LOG_TAG, "wrapperGarbageCollectionFinish");
+//    logi(LOG_TAG, "wrapperGarbageCollectionFinish");
+    notifyGarbageCollectionFinish();
 }
 
 void wrapperObjectFree(jvmtiEnv *jvmti_env, jlong tag) {
-    logi(LOG_TAG, "wrapperObjectFree");
+//    logi(LOG_TAG, "wrapperObjectFree");
+    notifyObjectFree();
 }
 
 void wrapperVMObjectAlloc(jvmtiEnv *jvmti_env,
