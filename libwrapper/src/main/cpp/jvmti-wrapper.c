@@ -167,6 +167,7 @@ void wrapperClassPrepare(jvmtiEnv *jvmti_env,
                          jthread thread,
                          jclass klass) {
 //    logi(LOG_TAG, "wrapperClassPrepare");
+    notifyClassPrepare(jni_env, thread, klass);
 }
 
 void wrapperMethodEntry(jvmtiEnv *jvmti_env,

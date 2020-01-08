@@ -16,3 +16,5 @@ void notifyThreadStart(JNIEnv *jni_env, jthread thread);
 void notifyThreadEnd(JNIEnv *jni_env, jthread thread);
 
 void notifyClassLoad(JNIEnv *jni_env, jthread thread, jclass klass);
+
+void notifyClassPrepare(JNIEnv *jni_env, jthread thread, jclass klass);

@@ -18,10 +18,12 @@ object NativeTiBridge {
     }
 
     @JvmStatic
-    fun onClassLoad(threadName: String, classSign: String, classGeneric: String?) {
-        Log.e(
-            LOG_TAG, "onClassLoad classSign = $classSign," +
-                    "classGeneric = $classGeneric"
-        )
+    fun onClassLoad(threadName: String, classSign: String) {
+        Log.e(LOG_TAG, "onClassLoad classSign = $classSign")
+    }
+
+    @JvmStatic
+    fun onClassPrepare(threadName: String, classSign: String) {
+        Log.e(LOG_TAG, "onClassPrepare classSign = $classSign")
     }
 }
