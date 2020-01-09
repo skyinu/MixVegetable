@@ -17,7 +17,7 @@ typedef struct Node {
 
 void init();
 
-Node *newNode();
+Node *newNode(short msgType);
 
 void addNode(Node *node);
 

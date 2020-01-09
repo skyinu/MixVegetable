@@ -19,11 +19,12 @@ void init() {
     pthread_mutex_init(&nodeMutex, NULL);
 }
 
-Node *newNode() {
+Node *newNode(short msgType) {
     Node *node = malloc(sizeof(Node));
     node->msg1 = NULL;
     node->msg2 = NULL;
     node->msg3 = NULL;
+    node->msgType = msgType;
     return node;
 }
 

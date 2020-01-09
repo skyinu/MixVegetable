@@ -9,13 +9,13 @@ object NativeTiBridge {
     const val LOG_TAG = "TAG_WRAPPER"
     private var methodCall = 0L
     @JvmStatic
-    fun onThreadStart(name: String, daemon: Boolean) {
-//        Log.e(LOG_TAG, "onThreadStart name = ${name}, demaon = $daemon")
+    fun onThreadStart(name: String, daemon: String) {
+        Log.e(LOG_TAG, "onThreadStart name = ${name}, demaon = $daemon")
     }
 
     @JvmStatic
-    fun onThreadEnd(name: String, daemon: Boolean) {
-//        Log.e(LOG_TAG, "onThreadEnd name = ${name}, demaon = $daemon")
+    fun onThreadEnd(name: String, daemon: String) {
+        Log.e(LOG_TAG, "onThreadEnd name = ${name}, demaon = $daemon")
     }
 
     @JvmStatic
