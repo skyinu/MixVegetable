@@ -20,18 +20,23 @@ object NativeTiBridge {
 
     @JvmStatic
     fun onClassLoad(threadName: String, classSign: String) {
-//        Log.e(LOG_TAG, "onClassLoad classSign = $classSign")
+        Log.e(LOG_TAG, "onClassLoad classSign = $classSign")
     }
 
     @JvmStatic
     fun onClassPrepare(threadName: String, classSign: String) {
-//        Log.e(LOG_TAG, "onClassPrepare classSign = $classSign")
+        Log.e(LOG_TAG, "onClassPrepare classSign = $classSign")
     }
 
     @JvmStatic
     fun onMethodEntry(combinedMsg: String?) {
 //        Log.e(LOG_TAG, combinedMsg)
         methodCall++
+    }
+
+    @JvmStatic
+    fun onMethodExit(combinedMsg: String?, popByException: String) {
+//        Log.e(LOG_TAG, "onMethodExit $combinedMsg, popByException $popByException")
     }
 
     @JvmStatic

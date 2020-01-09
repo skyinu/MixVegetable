@@ -29,6 +29,8 @@ jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
     jvmtiError error;
     jvmtiCapabilities capa;
     //consider to set t0 0 and set to 1 case by case
+    capa.can_generate_method_entry_events = 1;
+    capa.can_generate_method_exit_events = 1;
     error = (*jvmti)->AddCapabilities(jvmti, &capa);
     if (error != NULL) {
         char log[GENERAL_LOG_LENGTH];
@@ -183,7 +185,8 @@ void wrapperMethodExit(jvmtiEnv *jvmti_env,
                        jmethodID method,
                        jboolean was_popped_by_exception,
                        jvalue return_value) {
-    logi(LOG_TAG, "wrapperMethodExit");
+//    logi(LOG_TAG, "wrapperMethodExit");
+    notifyMethodExit(thread, method, was_popped_by_exception, return_value);
 }
 
 void wrapperNativeMethodBind(jvmtiEnv *jvmti_env,

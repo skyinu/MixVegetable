@@ -11,7 +11,7 @@
 #include "node.h"
 
 #define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
-#define BRIDGE_METHOD_COUNT 8
+#define BRIDGE_METHOD_COUNT 9
 #define BRIDGE_LOG_TAG "TAG_WRAPPER"
 #define SLEEP_TIME (500 * 1000)
 #define MSG_TYPE_CLASSLODE  0
@@ -22,6 +22,7 @@
 #define MSG_TYPE_OBJECT_FREE  5
 #define MSG_TYPE_THREAD_START  6
 #define MSG_TYPE_THREAD_END  7
+#define MSG_TYPE_METHOD_EXIT  8
 
 JavaVM *globalVm;
 jvmtiEnv *globalJvmtiEnv;
@@ -160,6 +161,12 @@ void initBridgeConfig(JNIEnv *jni_env) {
             theBridgeClass,
             "onThreadEnd",
             "(Ljava/lang/String;Ljava/lang/String;)V");
+    bridgeMethods[MSG_TYPE_METHOD_EXIT] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onMethodExit",
+            "(Ljava/lang/String;Ljava/lang/String;)V");
+
 }
 
 void setUpEnv(JavaVM *vm, jvmtiEnv *jvmti_env, JNIEnv *jni_env) {
@@ -227,7 +234,8 @@ void notifyMethodEntry(jthread thread, jmethodID method) {
     (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
     (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
     if (strcmp(classSignature, "Lcom/skyinu/jvmti/libwrapper/NativeTiBridge;") == 0
-        || strcmp(classSignature, "Landroid/util/Log;") == 0
+        || strncmp(classSignature, "Lkotlin/jvm/internal/", strlen("Lkotlin/jvm/internal/")) == 0
+        || strncmp(classSignature, "Landroid/util/", strlen("Landroid/util/")) == 0
         || strncmp(classSignature, "Ljava/lang/", strlen("Ljava/lang/")) == 0) {
         free(classSignature);
         return;
@@ -246,6 +254,48 @@ void notifyMethodEntry(jthread thread, jmethodID method) {
     strcat(methodMsg, " ");
     strcat(methodMsg, methodSignature);
     Node *node = newNode(MSG_TYPE_METHOD_ENTRY);
+    node->msg1 = methodMsg;
+    addNode(node);
+    free(methodName);
+    free(classSignature);
+    free(methodSignature);
+}
+
+void notifyMethodExit(jthread thread, jmethodID method, jboolean was_popped_by_exception,
+                      jvalue return_value) {
+    jvmtiThreadInfo info;
+    (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
+    char *classSignature = malloc(sizeof(char) * 150);
+    jclass declareClass;
+    (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
+    (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
+    if (strcmp(classSignature, "Lcom/skyinu/jvmti/libwrapper/NativeTiBridge;") == 0
+        || strncmp(classSignature, "Lkotlin/jvm/internal/", strlen("Lkotlin/jvm/internal/")) == 0
+        || strncmp(classSignature, "Landroid/util/", strlen("Landroid/util/")) == 0
+        || strncmp(classSignature, "Ljava/lang/", strlen("Ljava/lang/")) == 0) {
+        free(classSignature);
+        return;
+    }
+    char *methodMsg = malloc(sizeof(char) * 300);
+    char *methodName = malloc(sizeof(char) * 100);
+    char *methodSignature = malloc(sizeof(char) * 50);
+    methodMsg[0] = '\0';
+    (*globalJvmtiEnv)->GetMethodName(globalJvmtiEnv, method, &methodName, &methodSignature, NULL);
+    strcat(methodMsg, "onMethodEntry ");
+    strcat(methodMsg, info.name);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, classSignature);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, methodName);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, methodSignature);
+    Node *node = newNode(MSG_TYPE_METHOD_EXIT);
+    node->msg2 = malloc(sizeof(char) * 10);
+    if (was_popped_by_exception) {
+        strcpy(node->msg2, "true");
+    } else {
+        strcpy(node->msg2, "false");
+    }
     node->msg1 = methodMsg;
     addNode(node);
     free(methodName);

@@ -21,6 +21,9 @@ void notifyClassPrepare(JNIEnv *jni_env, jthread thread, jclass klass);
 
 void notifyMethodEntry(jthread thread, jmethodID method);
 
+void notifyMethodExit(jthread thread, jmethodID method, jboolean was_popped_by_exception,
+                      jvalue return_value);
+
 void notifyGarbageCollectionStart();
 
 void notifyGarbageCollectionFinish();
