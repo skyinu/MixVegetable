@@ -3,6 +3,7 @@
 //
 
 #include <string.h>
+#include "stdlib.h"
 #include "app_bridge.h"
 #include "../applog/app_log.h"
 #include "pthread.h"
@@ -11,7 +12,7 @@
 #include "node.h"
 
 #define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
-#define BRIDGE_METHOD_COUNT 9
+#define BRIDGE_METHOD_COUNT 11
 #define BRIDGE_LOG_TAG "TAG_WRAPPER"
 #define SLEEP_TIME (500 * 1000)
 #define MSG_TYPE_CLASSLODE  0
@@ -23,6 +24,8 @@
 #define MSG_TYPE_THREAD_START  6
 #define MSG_TYPE_THREAD_END  7
 #define MSG_TYPE_METHOD_EXIT  8
+#define MSG_TYPE_COMPILED_METHOD_LOAD 9
+#define MSG_TYPE_COMPILED_METHOD_UNLOAD 10
 
 JavaVM *globalVm;
 jvmtiEnv *globalJvmtiEnv;
@@ -166,6 +169,17 @@ void initBridgeConfig(JNIEnv *jni_env) {
             theBridgeClass,
             "onMethodExit",
             "(Ljava/lang/String;Ljava/lang/String;)V");
+    bridgeMethods[MSG_TYPE_COMPILED_METHOD_LOAD] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onCompiledMethodLoad",
+            "(Ljava/lang/String;Ljava/lang/String;)V");
+
+    bridgeMethods[MSG_TYPE_COMPILED_METHOD_UNLOAD] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onCompiledMethodUnload",
+            "(Ljava/lang/String;)V");
 
 }
 
@@ -316,4 +330,54 @@ void notifyGarbageCollectionFinish() {
 void notifyObjectFree() {
     Node *node = newNode(MSG_TYPE_OBJECT_FREE);
     addNode(node);
+}
+
+void notifyCompiledMethodLoad(jmethodID method, jint code_size) {
+    char *classSignature = malloc(sizeof(char) * 150);
+    jclass declareClass;
+    (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
+    (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
+    char *methodMsg = malloc(sizeof(char) * 300);
+    char *methodName = malloc(sizeof(char) * 100);
+    char *methodSignature = malloc(sizeof(char) * 50);
+    methodMsg[0] = '\0';
+    (*globalJvmtiEnv)->GetMethodName(globalJvmtiEnv, method, &methodName, &methodSignature, NULL);
+    strcat(methodMsg, "onMethodEntry ");
+    strcat(methodMsg, classSignature);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, methodName);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, methodSignature);
+    Node *node = newNode(MSG_TYPE_COMPILED_METHOD_LOAD);
+    node->msg2 = malloc(sizeof(char) * 10);
+    node->msg1 = methodMsg;
+    sscanf(node->msg2, "%d\0", code_size);
+    addNode(node);
+    free(methodName);
+    free(classSignature);
+    free(methodSignature);
+}
+
+void notifyCompiledMethodUnload(jmethodID method) {
+    char *classSignature = malloc(sizeof(char) * 150);
+    jclass declareClass;
+    (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
+    (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
+    char *methodMsg = malloc(sizeof(char) * 300);
+    char *methodName = malloc(sizeof(char) * 100);
+    char *methodSignature = malloc(sizeof(char) * 50);
+    methodMsg[0] = '\0';
+    (*globalJvmtiEnv)->GetMethodName(globalJvmtiEnv, method, &methodName, &methodSignature, NULL);
+    strcat(methodMsg, "onMethodEntry ");
+    strcat(methodMsg, classSignature);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, methodName);
+    strcat(methodMsg, " ");
+    strcat(methodMsg, methodSignature);
+    Node *node = newNode(MSG_TYPE_COMPILED_METHOD_UNLOAD);
+    node->msg1 = methodMsg;
+    addNode(node);
+    free(methodName);
+    free(classSignature);
+    free(methodSignature);
 }

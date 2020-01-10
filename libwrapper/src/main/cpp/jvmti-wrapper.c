@@ -159,7 +159,6 @@ void wrapperClassLoad(jvmtiEnv *jvmti_env,
                       JNIEnv *jni_env,
                       jthread thread,
                       jclass klass) {
-//    logi(LOG_TAG, "wrapperClassLoad");
     notifyClassLoad(jni_env, thread, klass);
 }
 
@@ -167,7 +166,6 @@ void wrapperClassPrepare(jvmtiEnv *jvmti_env,
                          JNIEnv *jni_env,
                          jthread thread,
                          jclass klass) {
-//    logi(LOG_TAG, "wrapperClassPrepare");
     notifyClassPrepare(jni_env, thread, klass);
 }
 
@@ -175,7 +173,6 @@ void wrapperMethodEntry(jvmtiEnv *jvmti_env,
                         JNIEnv *jni_env,
                         jthread thread,
                         jmethodID method) {
-//    logi(LOG_TAG, "wrapperMethodEntry");
     notifyMethodEntry(thread, method);
 }
 
@@ -185,7 +182,6 @@ void wrapperMethodExit(jvmtiEnv *jvmti_env,
                        jmethodID method,
                        jboolean was_popped_by_exception,
                        jvalue return_value) {
-//    logi(LOG_TAG, "wrapperMethodExit");
     notifyMethodExit(thread, method, was_popped_by_exception, return_value);
 }
 
@@ -206,12 +202,14 @@ void wrapperCompiledMethodLoad(jvmtiEnv *jvmti_env,
                                const jvmtiAddrLocationMap *map,
                                const void *compile_info) {
     logi(LOG_TAG, "wrapperCompiledMethodLoad");
+    notifyCompiledMethodLoad(method, code_size);
 }
 
 void wrapperCompiledMethodUnload(jvmtiEnv *jvmti_env,
                                  jmethodID method,
                                  const void *code_addr) {
     logi(LOG_TAG, "wrapperCompiledMethodUnload");
+    notifyCompiledMethodUnload(method);
 }
 
 void wrapperDynamicCodeGenerated(jvmtiEnv *jvmti_env,
@@ -264,12 +262,10 @@ void wrapperResourceExhausted(jvmtiEnv *jvmti_env,
 }
 
 void wrapperGarbageCollectionStart(jvmtiEnv *jvmti_env) {
-//    logi(LOG_TAG, "wrapperGarbageCollectionStart");
     notifyGarbageCollectionStart();
 }
 
 void wrapperGarbageCollectionFinish(jvmtiEnv *jvmti_env) {
-//    logi(LOG_TAG, "wrapperGarbageCollectionFinish");
     notifyGarbageCollectionFinish();
 }
 

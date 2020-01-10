@@ -29,3 +29,7 @@ void notifyGarbageCollectionStart();
 void notifyGarbageCollectionFinish();
 
 void notifyObjectFree();
+
+void notifyCompiledMethodLoad(jmethodID method, jint code_size);
+
+void notifyCompiledMethodUnload(jmethodID method);
