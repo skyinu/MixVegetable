@@ -20,12 +20,23 @@ JavaVM *globalVm;
 jvmtiEnv *globalJvmtiEnv;
 extern jclass theBridgeClass;
 extern jmethodID *bridgeMethods;
+jobject theBizClassLoader = NULL;
 
 void *handleMessages(void *args) {
     logi(BRIDGE_LOG_TAG, "work thread start");
     JNIEnv *jni_env;
     (*globalVm)->AttachCurrentThread(globalVm, &jni_env, NULL);
     int loop = 1;
+    while (JNI_TRUE) {
+        if (theBizClassLoader == NULL) {
+            usleep(SLEEP_TIME);
+            continue;
+        }
+        break;
+    }
+    initBridgeClass(jni_env, theBizClassLoader);
+    (*jni_env)->DeleteGlobalRef(jni_env, theBizClassLoader);
+    theBizClassLoader = NULL;
     initBridgeMethod(jni_env);
     while (loop) {
         Node *current = getNode();
@@ -163,6 +174,12 @@ void notifyClassLoad(JNIEnv *jni_env, jthread thread, jclass klass) {
     node->msg1 = info.name;
     node->msg2 = signature;
     addNode(node);
+    if (isBizClass(signature) || theBridgeClass == NULL) {
+        loge(BRIDGE_LOG_TAG, "test");
+        jobject classloader;
+        (*globalJvmtiEnv)->GetClassLoader(globalJvmtiEnv, klass, &classloader);
+        theBizClassLoader = (*jni_env)->NewGlobalRef(jni_env, classloader);;
+    }
 }
 
 void notifyClassPrepare(JNIEnv *jni_env, jthread thread, jclass klass) {

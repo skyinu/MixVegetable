@@ -10,6 +10,8 @@
 #include "jni.h"
 
 #define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
+#define THE_BIZ_CLASS_LOADER_CLASS_TYPE  "[Landroid/view/View;"
+#define THE_BIZ_CLASS_LOADER_CLASS  "Landroid/view/View;"
 #define BRIDGE_METHOD_COUNT 19
 #define MSG_TYPE_CLASSLODE  0
 #define MSG_TYPE_CLASSPREPARE  1
@@ -30,5 +32,9 @@
 #define MSG_TYPE_RESOURCE_EXHAUSTED 16
 #define MSG_TYPE_DYNAMIC_CODE_GENERATED 17
 #define MSG_TYPE_VMOBJECT_ALLOC 18
+
+int isBizClass(char *classSign);
+
+void initBridgeClass(JNIEnv *jni_env, jobject theBizClassLoader);
 
 void initBridgeMethod(JNIEnv *jni_env);

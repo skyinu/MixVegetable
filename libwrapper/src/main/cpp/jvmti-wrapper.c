@@ -112,7 +112,6 @@ JNIEXPORT jint JNICALL Agent_OnAttach(JavaVM *vm, char *options, void *reserved)
     if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
-    (*jvmti)->AddToBootstrapClassLoaderSearch(jvmti, options);
     setUpEnv(vm, jvmti, env);
     return JNI_OK;
 }

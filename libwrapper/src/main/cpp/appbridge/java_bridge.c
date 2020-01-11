@@ -9,9 +9,23 @@
 jclass theBridgeClass = NULL;
 jmethodID *bridgeMethods = NULL;
 
+int isBizClass(char *classSign) {
+    return strcmp(THE_BIZ_CLASS_LOADER_CLASS, classSign) == 0 ||
+           strcmp(THE_BIZ_CLASS_LOADER_CLASS_TYPE, classSign) == 0;
+}
+
+void initBridgeClass(JNIEnv *jni_env, jobject theBizClassLoader) {
+    auto classLoaderClass = (*jni_env)->FindClass(jni_env, "java/lang/ClassLoader");
+    auto loadClassMethod = (*jni_env)->GetMethodID(jni_env, classLoaderClass, "loadClass",
+                                                   "(Ljava/lang/String;)Ljava/lang/Class;");
+    auto bridgeClass = (*jni_env)->CallObjectMethod(jni_env, theBizClassLoader,
+                                                    loadClassMethod,
+                                                    (*jni_env)->NewStringUTF(jni_env,
+                                                                             BRIDGE_CLASS));
+    theBridgeClass = (*jni_env)->NewGlobalRef(jni_env, bridgeClass);
+}
+
 void initBridgeMethod(JNIEnv *jni_env) {
-    theBridgeClass = (*jni_env)->NewGlobalRef(jni_env,
-                                              (*jni_env)->FindClass(jni_env, BRIDGE_CLASS));
     bridgeMethods = malloc(sizeof(jmethodID) * BRIDGE_METHOD_COUNT);
     memset(bridgeMethods, NULL, BRIDGE_METHOD_COUNT);
     bridgeMethods[MSG_TYPE_CLASSLODE] = (*jni_env)->GetStaticMethodID(

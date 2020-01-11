@@ -1,118 +1,106 @@
 package com.skyinu.jvmti.libwrapper
 
 import android.util.Log
-
 import androidx.annotation.Keep
 
 @Keep
 object NativeTiBridge {
-    const val LOG_TAG = "TAG_WRAPPER"
-    private var methodCall = 0L
+    @Keep
+    var applicationEventListener: ApplicationEventListener? = null
     @JvmStatic
     fun onThreadStart(name: String, daemon: String) {
-        Log.e(LOG_TAG, "onThreadStart name = ${name}, demaon = $daemon")
+        Log.e("TAG1","NativeTiBridge class loader = " + this::class.java.classLoader+ "" +
+                "name = " + name::class.java.classLoader)
+        applicationEventListener?.onThreadStart(name, daemon)
     }
 
     @JvmStatic
     fun onThreadEnd(name: String, daemon: String) {
-        Log.e(LOG_TAG, "onThreadEnd name = ${name}, demaon = $daemon")
+        applicationEventListener?.onThreadEnd(name, daemon)
     }
 
     @JvmStatic
     fun onClassLoad(threadName: String, classSign: String) {
-//        Log.e(LOG_TAG, "onClassLoad classSign = $classSign")
+        applicationEventListener?.onClassLoad(threadName, classSign)
     }
 
     @JvmStatic
     fun onClassPrepare(threadName: String, classSign: String) {
-//        Log.e(LOG_TAG, "onClassPrepare classSign = $classSign")
+        applicationEventListener?.onClassPrepare(threadName, classSign)
     }
 
     @JvmStatic
     fun onMethodEntry(combinedMsg: String?) {
-//        Log.e(LOG_TAG, combinedMsg)
-        methodCall++
+        applicationEventListener?.onMethodEntry(combinedMsg)
     }
 
     @JvmStatic
     fun onMethodExit(combinedMsg: String?, popByException: String) {
-//        Log.e(LOG_TAG, "onMethodExit $combinedMsg, popByException $popByException")
+        applicationEventListener?.onMethodExit(combinedMsg, popByException)
     }
 
     @JvmStatic
     fun onCompiledMethodLoad(combinedMsg: String?, codeSize: String) {
-        Log.e(LOG_TAG, "onCompiledMethodLoad $combinedMsg, codeSize $codeSize")
+        applicationEventListener?.onCompiledMethodLoad(combinedMsg, codeSize)
     }
 
     @JvmStatic
     fun onCompiledMethodUnload(combinedMsg: String?) {
-        Log.e(LOG_TAG, "onCompiledMethodUnload $combinedMsg")
+        applicationEventListener?.onCompiledMethodUnload(combinedMsg)
     }
 
     @JvmStatic
     fun onGarbageCollectionStart() {
-        Log.e(LOG_TAG, "onGarbageCollectionStart")
+        applicationEventListener?.onGarbageCollectionStart()
     }
 
     @JvmStatic
     fun onGarbageCollectionFinish() {
-        Log.e(LOG_TAG, "onGarbageCollectionFinish")
+        applicationEventListener?.onGarbageCollectionFinish()
     }
 
     @JvmStatic
     fun onObjectFree() {
-        Log.e(LOG_TAG, "onObjectFree")
+        applicationEventListener?.onObjectFree()
     }
 
     @JvmStatic
     fun onMonitorWait(threadName: String?, timeout: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorWait name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
-        )
+        applicationEventListener?.onMonitorWait(threadName, timeout, monitorObj)
     }
 
     @JvmStatic
     fun onMonitorWaited(threadName: String?, timeout: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorWaited name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
-        )
+        applicationEventListener?.onMonitorWaited(threadName, timeout, monitorObj)
     }
 
     @JvmStatic
     fun onMonitorContendedEnter(threadName: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorContendedEnter name = ${threadName}, monitorObj = $monitorObj"
-        )
+        applicationEventListener?.onMonitorContendedEnter(threadName, monitorObj)
     }
 
     @JvmStatic
     fun onMonitorContendedEntered(threadName: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorContendedEntered name = ${threadName}, monitorObj = $monitorObj"
-        )
+        applicationEventListener?.onMonitorContendedEntered(threadName, monitorObj)
     }
 
     @JvmStatic
     fun onDataDumpRequest() {
-        Log.e(LOG_TAG, "onDataDumpRequest")
+        applicationEventListener?.onDataDumpRequest()
     }
 
     @JvmStatic
     fun onResourceExhausted() {
-        Log.e(LOG_TAG, "onResourceExhausted")
+        applicationEventListener?.onResourceExhausted()
     }
 
     @JvmStatic
     fun onDynamicCodeGenerated(name: String?) {
-        Log.e(LOG_TAG, "onDynamicCodeGenerated $name")
+        applicationEventListener?.onDynamicCodeGenerated(name)
     }
 
     @JvmStatic
     fun onVMObjectAlloc(threadName: String?, name: String?) {
-        Log.e(LOG_TAG, "onVMObjectAlloc threadName = ${threadName}, name $name")
+        applicationEventListener?.onVMObjectAlloc(threadName, name)
     }
 }
