@@ -6,8 +6,28 @@
 #include "java_bridge.h"
 #include "string.h"
 
+#define FILTER_BRIDGE_PACKAGE  "Lcom/skyinu/jvmti/"
+#define FILTER_KT_JVM_INTERNAL "Lkotlin/jvm/internal/"
+#define FILTER_ANDROID_UTIL "Landroid/util/"
+#define FILTER_JAVA_LANG "Ljava/lang/"
+
 jclass theBridgeClass = NULL;
 jmethodID *bridgeMethods = NULL;
+
+//support set package filter at NativeTiBridge in the future
+int shouldFilterMethodCall(char *classSign) {
+    const size_t bridgeClassLength = strlen(FILTER_BRIDGE_PACKAGE);
+    const size_t ktJvmInternalLength = strlen(FILTER_KT_JVM_INTERNAL);
+    const size_t androidUtilLength = strlen(FILTER_ANDROID_UTIL);
+    const size_t javaLangLength = strlen(FILTER_JAVA_LANG);
+    if (strncmp(classSign, FILTER_BRIDGE_PACKAGE, bridgeClassLength) == 0
+        || strncmp(classSign, FILTER_KT_JVM_INTERNAL, ktJvmInternalLength) == 0
+        || strncmp(classSign, FILTER_ANDROID_UTIL, androidUtilLength) == 0
+        || strncmp(classSign, FILTER_JAVA_LANG, javaLangLength) == 0) {
+        return 1;
+    }
+    return 0;
+}
 
 int isBizClass(char *classSign) {
     return strcmp(THE_BIZ_CLASS_LOADER_CLASS, classSign) == 0 ||

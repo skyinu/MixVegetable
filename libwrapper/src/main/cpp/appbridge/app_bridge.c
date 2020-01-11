@@ -200,10 +200,7 @@ void notifyMethodEntry(jthread thread, jmethodID method) {
     jclass declareClass;
     (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
     (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
-    if (strcmp(classSignature, "Lcom/skyinu/jvmti/libwrapper/NativeTiBridge;") == 0
-        || strncmp(classSignature, "Lkotlin/jvm/internal/", strlen("Lkotlin/jvm/internal/")) == 0
-        || strncmp(classSignature, "Landroid/util/", strlen("Landroid/util/")) == 0
-        || strncmp(classSignature, "Ljava/lang/", strlen("Ljava/lang/")) == 0) {
+    if (shouldFilterMethodCall(classSignature)) {
         free(classSignature);
         return;
     }
@@ -236,10 +233,7 @@ void notifyMethodExit(jthread thread, jmethodID method, jboolean was_popped_by_e
     jclass declareClass;
     (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
     (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
-    if (strcmp(classSignature, "Lcom/skyinu/jvmti/libwrapper/NativeTiBridge;") == 0
-        || strncmp(classSignature, "Lkotlin/jvm/internal/", strlen("Lkotlin/jvm/internal/")) == 0
-        || strncmp(classSignature, "Landroid/util/", strlen("Landroid/util/")) == 0
-        || strncmp(classSignature, "Ljava/lang/", strlen("Ljava/lang/")) == 0) {
+    if (shouldFilterMethodCall(classSignature)) {
         free(classSignature);
         return;
     }

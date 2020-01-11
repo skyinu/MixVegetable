@@ -33,6 +33,8 @@
 #define MSG_TYPE_DYNAMIC_CODE_GENERATED 17
 #define MSG_TYPE_VMOBJECT_ALLOC 18
 
+int shouldFilterMethodCall(char *classSign);
+
 int isBizClass(char *classSign);
 
 void initBridgeClass(JNIEnv *jni_env, jobject theBizClassLoader);
