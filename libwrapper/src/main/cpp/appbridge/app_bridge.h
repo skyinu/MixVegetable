@@ -34,4 +34,14 @@ void notifyCompiledMethodLoad(jmethodID method, jint code_size);
 
 void notifyCompiledMethodUnload(jmethodID method);
 
-void notifyMonitorWait(JNIEnv *jni_env,jthread thread, jobject object, jlong timeout);
+void notifyMonitorWait(JNIEnv *jni_env, jthread thread, jobject object, jlong timeout);
+
+void notifyMonitorWaited(JNIEnv *jni_env, jthread thread, jobject object, jlong timeout);
+
+void notifyMonitorContendedEnter(JNIEnv *jni_env, jthread thread, jobject object);
+
+void notifyMonitorContendedEntered(JNIEnv *jni_env, jthread thread, jobject object);
+
+void notifyDataDumpRequest();
+
+void notifyResourceExhausted();

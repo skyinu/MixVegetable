@@ -71,4 +71,38 @@ object NativeTiBridge {
             "onMonitorWait name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
         )
     }
+
+    @JvmStatic
+    fun onMonitorWaited(threadName: String?, timeout: String?, monitorObj: Any?) {
+        Log.e(
+            LOG_TAG,
+            "onMonitorWaited name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
+        )
+    }
+
+    @JvmStatic
+    fun onMonitorContendedEnter(threadName: String?, monitorObj: Any?) {
+        Log.e(
+            LOG_TAG,
+            "onMonitorContendedEnter name = ${threadName}, monitorObj = $monitorObj"
+        )
+    }
+
+    @JvmStatic
+    fun onMonitorContendedEntered(threadName: String?, monitorObj: Any?) {
+        Log.e(
+            LOG_TAG,
+            "onMonitorContendedEntered name = ${threadName}, monitorObj = $monitorObj"
+        )
+    }
+
+    @JvmStatic
+    fun onDataDumpRequest() {
+        Log.e(LOG_TAG, "onDataDumpRequest")
+    }
+
+    @JvmStatic
+    fun onResourceExhausted() {
+        Log.e(LOG_TAG, "onResourceExhausted")
+    }
 }

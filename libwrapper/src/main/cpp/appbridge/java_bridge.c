@@ -75,4 +75,29 @@ void initBridgeMethod(JNIEnv *jni_env) {
             theBridgeClass,
             "onMonitorWait",
             "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V");
+    bridgeMethods[MSG_TYPE_MONITOR_WAITED] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onMonitorWaited",
+            "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V");
+    bridgeMethods[MSG_TYPE_MONITOR_CONTENDED_ENTER] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onMonitorContendedEnter",
+            "(Ljava/lang/String;Ljava/lang/Object;)V");
+    bridgeMethods[MSG_TYPE_MONITOR_CONTENDED_ENTERED] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onMonitorContendedEntered",
+            "(Ljava/lang/String;Ljava/lang/Object;)V");
+    bridgeMethods[MSG_TYPE_DATA_DUMP_REQUEST] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onDataDumpRequest",
+            "()V");
+    bridgeMethods[MSG_TYPE_RESOURCE_EXHAUSTED] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onResourceExhausted",
+            "()V");
 }

@@ -332,3 +332,46 @@ void notifyMonitorWait(JNIEnv *jni_env, jthread thread, jobject object, jlong ti
     node->obj = (*jni_env)->NewGlobalRef(jni_env, object);
     addNode(node);
 }
+
+void notifyMonitorWaited(JNIEnv *jni_env, jthread thread, jobject object, jlong timeout) {
+    jvmtiThreadInfo info;
+    (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
+    Node *node = newNode(MSG_TYPE_MONITOR_WAITED);
+    node->msg1 = info.name;
+    node->msg2 = malloc(sizeof(char) * 30);
+    if (timeout != NULL) {
+        sprintf(node->msg2, "%ld", timeout);
+    } else {
+        strcpy(node->msg2, "");
+    }
+    node->obj = (*jni_env)->NewGlobalRef(jni_env, object);
+    addNode(node);
+}
+
+void notifyMonitorContendedEnter(JNIEnv *jni_env, jthread thread, jobject object) {
+    jvmtiThreadInfo info;
+    (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
+    Node *node = newNode(MSG_TYPE_MONITOR_CONTENDED_ENTER);
+    node->msg1 = info.name;
+    node->obj = (*jni_env)->NewGlobalRef(jni_env, object);
+    addNode(node);
+}
+
+void notifyMonitorContendedEntered(JNIEnv *jni_env, jthread thread, jobject object) {
+    jvmtiThreadInfo info;
+    (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
+    Node *node = newNode(MSG_TYPE_MONITOR_CONTENDED_ENTERED);
+    node->msg1 = info.name;
+    node->obj = (*jni_env)->NewGlobalRef(jni_env, object);
+    addNode(node);
+}
+
+void notifyDataDumpRequest() {
+    Node *node = newNode(MSG_TYPE_DATA_DUMP_REQUEST);
+    addNode(node);
+}
+
+void notifyResourceExhausted() {
+    Node *node = newNode(MSG_TYPE_RESOURCE_EXHAUSTED);
+    addNode(node);
+}
