@@ -45,3 +45,9 @@ void notifyMonitorContendedEntered(JNIEnv *jni_env, jthread thread, jobject obje
 void notifyDataDumpRequest();
 
 void notifyResourceExhausted();
+
+void notifyDynamicCodeGenerated(const char *name);
+
+void notifyVMObjectAlloc(JNIEnv *jni_env,
+                         jthread thread,
+                         jclass object_klass);

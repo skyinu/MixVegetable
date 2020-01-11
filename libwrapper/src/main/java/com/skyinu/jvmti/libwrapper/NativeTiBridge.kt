@@ -105,4 +105,14 @@ object NativeTiBridge {
     fun onResourceExhausted() {
         Log.e(LOG_TAG, "onResourceExhausted")
     }
+
+    @JvmStatic
+    fun onDynamicCodeGenerated(name: String?) {
+        Log.e(LOG_TAG, "onDynamicCodeGenerated $name")
+    }
+
+    @JvmStatic
+    fun onVMObjectAlloc(threadName: String?, name: String?) {
+        Log.e(LOG_TAG, "onVMObjectAlloc threadName = ${threadName}, name $name")
+    }
 }

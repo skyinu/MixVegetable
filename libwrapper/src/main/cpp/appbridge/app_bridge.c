@@ -375,3 +375,23 @@ void notifyResourceExhausted() {
     Node *node = newNode(MSG_TYPE_RESOURCE_EXHAUSTED);
     addNode(node);
 }
+
+void notifyDynamicCodeGenerated(const char *name) {
+    Node *node = newNode(MSG_TYPE_DYNAMIC_CODE_GENERATED);
+    node->msg1 = malloc(sizeof(char) * (strlen(name) + 1));
+    strcpy(node->msg1, name);
+    addNode(node);
+}
+
+void notifyVMObjectAlloc(JNIEnv *jni_env,
+                         jthread thread,
+                         jclass object_klass) {
+    jvmtiThreadInfo info;
+    (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
+    Node *node = newNode(MSG_TYPE_VMOBJECT_ALLOC);
+    node->msg1 = info.name;
+    char *classSignature = malloc(sizeof(char) * 150);
+    (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, object_klass, &classSignature, NULL);
+    node->msg2 = classSignature;
+    addNode(node);
+}

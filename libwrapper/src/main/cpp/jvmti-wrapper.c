@@ -214,7 +214,7 @@ void wrapperDynamicCodeGenerated(jvmtiEnv *jvmti_env,
                                  const char *name,
                                  const void *address,
                                  jint length) {
-    logi(LOG_TAG, "wrapperDynamicCodeGenerated");
+    notifyDynamicCodeGenerated(name);
 }
 
 void wrapperDataDumpRequest(jvmtiEnv *jvmti_env) {
@@ -277,7 +277,7 @@ void wrapperVMObjectAlloc(jvmtiEnv *jvmti_env,
                           jobject object,
                           jclass object_klass,
                           jlong size) {
-    logi(LOG_TAG, "wrapperVMObjectAlloc");
+    notifyVMObjectAlloc(jni_env, thread, object_klass);
 }
 //callback area end
 

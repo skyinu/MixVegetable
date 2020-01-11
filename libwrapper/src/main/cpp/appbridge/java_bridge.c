@@ -100,4 +100,14 @@ void initBridgeMethod(JNIEnv *jni_env) {
             theBridgeClass,
             "onResourceExhausted",
             "()V");
+    bridgeMethods[MSG_TYPE_DYNAMIC_CODE_GENERATED] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onDynamicCodeGenerated",
+            "(Ljava/lang/String;)V");
+    bridgeMethods[MSG_TYPE_VMOBJECT_ALLOC] = (*jni_env)->GetStaticMethodID(
+            jni_env,
+            theBridgeClass,
+            "onVMObjectAlloc",
+            "(Ljava/lang/String;Ljava/lang/String;)V");
 }

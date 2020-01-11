@@ -10,7 +10,7 @@
 #include "jni.h"
 
 #define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
-#define BRIDGE_METHOD_COUNT 17
+#define BRIDGE_METHOD_COUNT 19
 #define MSG_TYPE_CLASSLODE  0
 #define MSG_TYPE_CLASSPREPARE  1
 #define MSG_TYPE_METHOD_ENTRY  2
@@ -28,5 +28,7 @@
 #define MSG_TYPE_MONITOR_CONTENDED_ENTERED 14
 #define MSG_TYPE_DATA_DUMP_REQUEST 15
 #define MSG_TYPE_RESOURCE_EXHAUSTED 16
+#define MSG_TYPE_DYNAMIC_CODE_GENERATED 17
+#define MSG_TYPE_VMOBJECT_ALLOC 18
 
 void initBridgeMethod(JNIEnv *jni_env);
