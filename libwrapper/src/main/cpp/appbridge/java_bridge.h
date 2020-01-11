@@ -1,0 +1,27 @@
+//
+// Created by skyinu on 2020/1/11.
+//
+
+#ifndef JVMTIWRAPPER_ANDROID_JAVA_BRIDGE_H
+#define JVMTIWRAPPER_ANDROID_JAVA_BRIDGE_H
+
+#endif //JVMTIWRAPPER_ANDROID_JAVA_BRIDGE_H
+
+#include "jni.h"
+
+#define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
+#define BRIDGE_METHOD_COUNT 12
+#define MSG_TYPE_CLASSLODE  0
+#define MSG_TYPE_CLASSPREPARE  1
+#define MSG_TYPE_METHOD_ENTRY  2
+#define MSG_TYPE_GARBAGE_START  3
+#define MSG_TYPE_GARBAGE_FINISH  4
+#define MSG_TYPE_OBJECT_FREE  5
+#define MSG_TYPE_THREAD_START  6
+#define MSG_TYPE_THREAD_END  7
+#define MSG_TYPE_METHOD_EXIT  8
+#define MSG_TYPE_COMPILED_METHOD_LOAD 9
+#define MSG_TYPE_COMPILED_METHOD_UNLOAD 10
+#define MSG_TYPE_MONITOR_WAIT  11
+
+void initBridgeMethod(JNIEnv *jni_env);

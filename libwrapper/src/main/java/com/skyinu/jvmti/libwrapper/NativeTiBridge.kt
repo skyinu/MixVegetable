@@ -63,4 +63,12 @@ object NativeTiBridge {
     fun onObjectFree() {
         Log.e(LOG_TAG, "onObjectFree")
     }
+
+    @JvmStatic
+    fun onMonitorWait(threadName: String?, timeout: String?, monitorObj: Any?) {
+        Log.e(
+            LOG_TAG,
+            "onMonitorWait name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
+        )
+    }
 }

@@ -25,10 +25,14 @@ Node *newNode(short msgType) {
     node->msg2 = NULL;
     node->msg3 = NULL;
     node->msgType = msgType;
+    node->obj = NULL;
     return node;
 }
 
 void addNode(Node *node) {
+    if (tail == NULL) {
+        return;
+    }
     pthread_mutex_lock(&nodeMutex);
     Node *preTail = tail->prev;
     preTail->next = node;
@@ -52,7 +56,7 @@ Node *getNode() {
     }
 }
 
-void freeNode(Node *node) {
+void freeNode(JNIEnv *jni_env, Node *node) {
     if (node->msg1 != NULL) {
         free(node->msg1);
     }
@@ -61,6 +65,9 @@ void freeNode(Node *node) {
     }
     if (node->msg3 != NULL) {
         free(node->msg3);
+    }
+    if (node->obj != NULL) {
+        (*jni_env)->DeleteGlobalRef(jni_env, node->obj);
     }
     free(node);
 }

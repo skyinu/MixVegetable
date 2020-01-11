@@ -33,3 +33,5 @@ void notifyObjectFree();
 void notifyCompiledMethodLoad(jmethodID method, jint code_size);
 
 void notifyCompiledMethodUnload(jmethodID method);
+
+void notifyMonitorWait(JNIEnv *jni_env,jthread thread, jobject object, jlong timeout);

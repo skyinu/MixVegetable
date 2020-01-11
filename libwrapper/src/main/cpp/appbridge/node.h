@@ -1,6 +1,8 @@
 //
 // Created by skyinu on 2020/1/8.
 //
+#include <jni.h>
+
 #ifndef JVMTIWRAPPER_ANDROID_NODE_H
 #define JVMTIWRAPPER_ANDROID_NODE_H
 
@@ -11,6 +13,7 @@ typedef struct Node {
     char *msg1;
     char *msg2;
     char *msg3;
+    jobject obj;
     struct Node *prev;
     struct Node *next;
 } Node;
@@ -23,4 +26,4 @@ void addNode(Node *node);
 
 Node *getNode();
 
-void freeNode(Node *node);
+void freeNode(JNIEnv *jni_env, Node *node);

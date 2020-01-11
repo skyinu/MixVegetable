@@ -10,44 +10,24 @@
 #include "malloc.h"
 #include "unistd.h"
 #include "node.h"
+#include "java_bridge.h"
+#include "stdlib.h"
 
-#define BRIDGE_CLASS "com/skyinu/jvmti/libwrapper/NativeTiBridge"
-#define BRIDGE_METHOD_COUNT 11
 #define BRIDGE_LOG_TAG "TAG_WRAPPER"
 #define SLEEP_TIME (500 * 1000)
-#define MSG_TYPE_CLASSLODE  0
-#define MSG_TYPE_CLASSPREPARE  1
-#define MSG_TYPE_METHOD_ENTRY  2
-#define MSG_TYPE_GARBAGE_START  3
-#define MSG_TYPE_GARBAGE_FINISH  4
-#define MSG_TYPE_OBJECT_FREE  5
-#define MSG_TYPE_THREAD_START  6
-#define MSG_TYPE_THREAD_END  7
-#define MSG_TYPE_METHOD_EXIT  8
-#define MSG_TYPE_COMPILED_METHOD_LOAD 9
-#define MSG_TYPE_COMPILED_METHOD_UNLOAD 10
 
 JavaVM *globalVm;
 jvmtiEnv *globalJvmtiEnv;
-jclass theBridgeClass = NULL;
-jmethodID *bridgeMethods = NULL;
+extern jclass theBridgeClass;
+extern jmethodID *bridgeMethods;
 
 void *handleMessages(void *args) {
     logi(BRIDGE_LOG_TAG, "work thread start");
     JNIEnv *jni_env;
     (*globalVm)->AttachCurrentThread(globalVm, &jni_env, NULL);
     int loop = 1;
+    initBridgeMethod(jni_env);
     while (loop) {
-        if (bridgeMethods == NULL) {
-            usleep(SLEEP_TIME);
-            continue;
-        }
-        for (int index = 0; index < BRIDGE_METHOD_COUNT; ++index) {
-            if (bridgeMethods[index] == NULL) {
-                usleep(SLEEP_TIME);
-                break;
-            }
-        }
         Node *current = getNode();
         if (current == NULL) {
             usleep(SLEEP_TIME);
@@ -74,20 +54,37 @@ void *handleMessages(void *args) {
                 break;
             case 1:
                 msg1 = (*jni_env)->NewStringUTF(jni_env, current->msg1);
-                (*jni_env)->CallStaticVoidMethod(jni_env,
-                                                 theBridgeClass,
-                                                 bridgeMethods[current->msgType],
-                                                 msg1);
+                if (current->obj == NULL) {
+                    (*jni_env)->CallStaticVoidMethod(jni_env,
+                                                     theBridgeClass,
+                                                     bridgeMethods[current->msgType],
+                                                     msg1);
+                } else {
+                    (*jni_env)->CallStaticVoidMethod(jni_env,
+                                                     theBridgeClass,
+                                                     bridgeMethods[current->msgType],
+                                                     msg1,
+                                                     current->obj);
+                }
                 (*jni_env)->DeleteLocalRef(jni_env, msg1);
                 break;
             case 2:
                 msg1 = (*jni_env)->NewStringUTF(jni_env, current->msg1);
                 msg2 = (*jni_env)->NewStringUTF(jni_env, current->msg2);
-                (*jni_env)->CallStaticVoidMethod(jni_env,
-                                                 theBridgeClass,
-                                                 bridgeMethods[current->msgType],
-                                                 msg1,
-                                                 msg2);
+                if (current->obj == NULL) {
+                    (*jni_env)->CallStaticVoidMethod(jni_env,
+                                                     theBridgeClass,
+                                                     bridgeMethods[current->msgType],
+                                                     msg1,
+                                                     msg2);
+                } else {
+                    (*jni_env)->CallStaticVoidMethod(jni_env,
+                                                     theBridgeClass,
+                                                     bridgeMethods[current->msgType],
+                                                     msg1,
+                                                     msg2,
+                                                     current->obj);
+                }
                 (*jni_env)->DeleteLocalRef(jni_env, msg1);
                 (*jni_env)->DeleteLocalRef(jni_env, msg2);
                 break;
@@ -110,7 +107,7 @@ void *handleMessages(void *args) {
                 loop = 0;
                 break;
         }
-        freeNode(current);
+        freeNode(jni_env, current);
     }
     (*globalVm)->DetachCurrentThread(globalVm);
     pthread_exit(NULL);
@@ -120,67 +117,6 @@ void initBridgeConfig(JNIEnv *jni_env) {
     init();
     pthread_t workThread;
     pthread_create(&workThread, NULL, &handleMessages, NULL);
-    theBridgeClass = (*jni_env)->NewGlobalRef(jni_env,
-                                              (*jni_env)->FindClass(jni_env, BRIDGE_CLASS));
-    bridgeMethods = malloc(sizeof(jmethodID) * BRIDGE_METHOD_COUNT);
-    memset(bridgeMethods, NULL, BRIDGE_METHOD_COUNT);
-    bridgeMethods[MSG_TYPE_CLASSLODE] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onClassLoad",
-            "(Ljava/lang/String;Ljava/lang/String;)V");
-    bridgeMethods[MSG_TYPE_CLASSPREPARE] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onClassPrepare",
-            "(Ljava/lang/String;Ljava/lang/String;)V");
-    bridgeMethods[MSG_TYPE_METHOD_ENTRY] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onMethodEntry",
-            "(Ljava/lang/String;)V");
-    bridgeMethods[MSG_TYPE_GARBAGE_START] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onGarbageCollectionStart",
-            "()V");
-    bridgeMethods[MSG_TYPE_GARBAGE_FINISH] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onGarbageCollectionFinish",
-            "()V");
-    bridgeMethods[MSG_TYPE_OBJECT_FREE] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onObjectFree",
-            "()V");
-    bridgeMethods[MSG_TYPE_THREAD_START] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onThreadStart",
-            "(Ljava/lang/String;Ljava/lang/String;)V");
-    bridgeMethods[MSG_TYPE_THREAD_END] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onThreadEnd",
-            "(Ljava/lang/String;Ljava/lang/String;)V");
-    bridgeMethods[MSG_TYPE_METHOD_EXIT] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onMethodExit",
-            "(Ljava/lang/String;Ljava/lang/String;)V");
-    bridgeMethods[MSG_TYPE_COMPILED_METHOD_LOAD] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onCompiledMethodLoad",
-            "(Ljava/lang/String;Ljava/lang/String;)V");
-
-    bridgeMethods[MSG_TYPE_COMPILED_METHOD_UNLOAD] = (*jni_env)->GetStaticMethodID(
-            jni_env,
-            theBridgeClass,
-            "onCompiledMethodUnload",
-            "(Ljava/lang/String;)V");
-
 }
 
 void setUpEnv(JavaVM *vm, jvmtiEnv *jvmti_env, JNIEnv *jni_env) {
@@ -351,7 +287,7 @@ void notifyCompiledMethodLoad(jmethodID method, jint code_size) {
     Node *node = newNode(MSG_TYPE_COMPILED_METHOD_LOAD);
     node->msg2 = malloc(sizeof(char) * 10);
     node->msg1 = methodMsg;
-    sscanf(node->msg2, "%d\0", code_size);
+    sprintf(node->msg2, "%d\0", code_size);
     addNode(node);
     free(methodName);
     free(classSignature);
@@ -380,4 +316,19 @@ void notifyCompiledMethodUnload(jmethodID method) {
     free(methodName);
     free(classSignature);
     free(methodSignature);
+}
+
+void notifyMonitorWait(JNIEnv *jni_env, jthread thread, jobject object, jlong timeout) {
+    jvmtiThreadInfo info;
+    (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
+    Node *node = newNode(MSG_TYPE_MONITOR_WAIT);
+    node->msg1 = info.name;
+    node->msg2 = malloc(sizeof(char) * 30);
+    if (timeout != NULL) {
+        sprintf(node->msg2, "%ld", timeout);
+    } else {
+        strcpy(node->msg2, "");
+    }
+    node->obj = (*jni_env)->NewGlobalRef(jni_env, object);
+    addNode(node);
 }

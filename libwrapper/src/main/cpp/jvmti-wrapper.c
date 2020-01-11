@@ -31,6 +31,8 @@ jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
     //consider to set t0 0 and set to 1 case by case
     capa.can_generate_method_entry_events = 1;
     capa.can_generate_method_exit_events = 1;
+    capa.can_generate_compiled_method_load_events = 1;
+    capa.can_generate_monitor_events = 1;
     error = (*jvmti)->AddCapabilities(jvmti, &capa);
     if (error != NULL) {
         char log[GENERAL_LOG_LENGTH];
@@ -229,6 +231,7 @@ void wrapperMonitorWait(jvmtiEnv *jvmti_env,
                         jobject object,
                         jlong timeout) {
     logi(LOG_TAG, "wrapperMonitorWait");
+    notifyMonitorWait(jni_env, thread, object, timeout);
 }
 
 void wrapperMonitorWaited(jvmtiEnv *jvmti_env,
