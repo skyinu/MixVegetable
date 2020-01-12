@@ -2,6 +2,7 @@ package com.skyinu.jvmti.wrapper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.skyinu.jvmti.libwrapper.NativeTiBridge
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -11,6 +12,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Thread({}, "dede").start()
         tvHello.setOnClickListener {
+            tvHello.text = "${NativeTiBridge.getObjectSize(this)}"
             try {
                 clickHello()
             } catch (ignore: Exception) {

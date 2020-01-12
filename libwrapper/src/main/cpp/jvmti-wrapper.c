@@ -9,11 +9,13 @@
 #include "malloc.h"
 #include "appbridge/app_bridge.h"
 #include "jvmti.h"
+#include "com_skyinu_jvmti_libwrapper_NativeBridge.h"
 
 #define LOG_TAG "TAG_WRAPPER"
 #define MAX_LOG_LENGTH 500
 #define GENERAL_LOG_LENGTH 200
 
+JavaVM *globalVM = NULL;
 
 jvmtiEnv *createJvmTiEnv(JavaVM *vm, jint version) {
     jvmtiEnv *jvmti;
@@ -95,6 +97,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
         return JNI_ERR;
     }
+    globalVM = vm;
     return JNI_VERSION_1_6;
 }
 
@@ -279,4 +282,12 @@ void wrapperVMObjectAlloc(jvmtiEnv *jvmti_env,
     notifyVMObjectAlloc(jni_env, thread, object_klass);
 }
 //callback area end
+
+JNIEXPORT jlong JNICALL Java_com_skyinu_jvmti_libwrapper_NativeBridge_getObjSize
+        (JNIEnv *env, jclass class, jobject obj){
+    jvmtiEnv *jvmti = createJvmTiEnv(globalVM, JVMTI_VERSION_1_2);
+    jlong size;
+    (*jvmti)->GetObjectSize(jvmti, obj, &size);
+    return size;
+}
 

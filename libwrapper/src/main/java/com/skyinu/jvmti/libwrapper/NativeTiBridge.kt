@@ -1,16 +1,14 @@
 package com.skyinu.jvmti.libwrapper
 
-import android.util.Log
 import androidx.annotation.Keep
 
 @Keep
 object NativeTiBridge {
     @Keep
     var applicationEventListener: ApplicationEventListener? = null
+
     @JvmStatic
     fun onThreadStart(name: String, daemon: String) {
-        Log.e("TAG1","NativeTiBridge class loader = " + this::class.java.classLoader+ "" +
-                "name = " + name::class.java.classLoader)
         applicationEventListener?.onThreadStart(name, daemon)
     }
 
@@ -102,5 +100,9 @@ object NativeTiBridge {
     @JvmStatic
     fun onVMObjectAlloc(threadName: String?, name: String?) {
         applicationEventListener?.onVMObjectAlloc(threadName, name)
+    }
+
+    fun getObjectSize(obj: Any): Long {
+        return NativeBridge.getObjSize(obj)
     }
 }

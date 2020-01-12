@@ -175,7 +175,6 @@ void notifyClassLoad(JNIEnv *jni_env, jthread thread, jclass klass) {
     node->msg2 = signature;
     addNode(node);
     if (isBizClass(signature) || theBridgeClass == NULL) {
-        loge(BRIDGE_LOG_TAG, "test");
         jobject classloader;
         (*globalJvmtiEnv)->GetClassLoader(globalJvmtiEnv, klass, &classloader);
         theBizClassLoader = (*jni_env)->NewGlobalRef(jni_env, classloader);;
