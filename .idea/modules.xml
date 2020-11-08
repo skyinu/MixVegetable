@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jvmtiwrapper-android.iml" filepath="$PROJECT_DIR$/jvmtiwrapper-android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libwrapper/libwrapper.iml" filepath="$PROJECT_DIR$/libwrapper/libwrapper.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/jvmtiwrapper-android.iml" filepath="$PROJECT_DIR$/.idea/modules/jvmtiwrapper-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/jvmtiwrapper-android.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/jvmtiwrapper-android.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libwrapper/jvmtiwrapper-android.libwrapper.iml" filepath="$PROJECT_DIR$/.idea/modules/libwrapper/jvmtiwrapper-android.libwrapper.iml" />
     </modules>
   </component>
 </project>

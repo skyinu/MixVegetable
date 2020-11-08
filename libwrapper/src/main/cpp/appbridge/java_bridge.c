@@ -47,7 +47,7 @@ void initBridgeClass(JNIEnv *jni_env, jobject theBizClassLoader) {
 
 void initBridgeMethod(JNIEnv *jni_env) {
     bridgeMethods = malloc(sizeof(jmethodID) * BRIDGE_METHOD_COUNT);
-    memset(bridgeMethods, NULL, BRIDGE_METHOD_COUNT);
+    memset(bridgeMethods, 0, BRIDGE_METHOD_COUNT);
     bridgeMethods[MSG_TYPE_CLASSLODE] = (*jni_env)->GetStaticMethodID(
             jni_env,
             theBridgeClass,

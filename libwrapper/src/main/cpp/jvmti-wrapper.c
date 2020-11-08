@@ -30,13 +30,19 @@ jvmtiEnv *createJvmTiEnv(JavaVM *vm, jint version) {
 jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
     jvmtiError error;
     jvmtiCapabilities capa;
-    //consider to set t0 0 and set to 1 case by case
-    capa.can_generate_method_entry_events = 1;
-    capa.can_generate_method_exit_events = 1;
-    capa.can_generate_compiled_method_load_events = 1;
-    capa.can_generate_monitor_events = 1;
+    error = (*jvmti)->GetPotentialCapabilities(jvmti, &capa);
+    if (error != 0) {
+        char log[GENERAL_LOG_LENGTH];
+        sprintf(log, "GetPotentialCapabilities something not support here, error code is %d",
+                error);
+        loge(LOG_TAG, log);
+    } else {
+        char log[GENERAL_LOG_LENGTH];
+        sprintf(log, "alloc %d", capa.can_generate_vm_object_alloc_events);
+        loge(LOG_TAG, log);
+    }
     error = (*jvmti)->AddCapabilities(jvmti, &capa);
-    if (error != NULL) {
+    if (error != 0) {
         char log[GENERAL_LOG_LENGTH];
         sprintf(log, "something not support here, error code is %d", error);
         loge(LOG_TAG, log);
@@ -84,7 +90,7 @@ void configCallback(jvmtiEnv *jvmti) {
     callbacks.ObjectFree = &wrapperObjectFree;
     callbacks.VMObjectAlloc = &wrapperVMObjectAlloc;
     jvmtiError error = (*jvmti)->SetEventCallbacks(jvmti, &callbacks, (jint) sizeof(callbacks));
-    if (error != NULL) {
+    if (error != JVMTI_ERROR_NONE) {
         char log[GENERAL_LOG_LENGTH];
         sprintf(log, "config callback  error, error code is %d", error);
         loge(LOG_TAG, log);
