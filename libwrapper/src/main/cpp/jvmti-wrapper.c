@@ -52,13 +52,17 @@ jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
 void configEvent(jvmtiEnv *jvmti) {
     jint start = JVMTI_MIN_EVENT_TYPE_VAL;
     jint end = JVMTI_MAX_EVENT_TYPE_VAL;
-    for (int index = start + 1; index < end; ++index) {
+    for (int index = start ; index <= end; ++index) {
         jvmtiError error = (*jvmti)->SetEventNotificationMode(jvmti, JVMTI_ENABLE,
                                                               (jvmtiEvent) index, NULL);
-        if (error != NULL) {
+        if (error != JVMTI_ERROR_NONE) {
             char log[GENERAL_LOG_LENGTH];
             sprintf(log, "config event %d error, error code is %d", index, error);
             loge(LOG_TAG, log);
+        } else {
+            char log[GENERAL_LOG_LENGTH];
+            sprintf(log, "config event %d yes", index);
+            logi(LOG_TAG, log);
         }
     }
 }
@@ -290,7 +294,7 @@ void wrapperVMObjectAlloc(jvmtiEnv *jvmti_env,
 //callback area end
 
 JNIEXPORT jlong JNICALL Java_com_skyinu_jvmti_libwrapper_NativeBridge_getObjSize
-        (JNIEnv *env, jclass class, jobject obj){
+        (JNIEnv *env, jclass class, jobject obj) {
     jvmtiEnv *jvmti = createJvmTiEnv(globalVM, JVMTI_VERSION_1_2);
     jlong size;
     (*jvmti)->GetObjectSize(jvmti, obj, &size);
