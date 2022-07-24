@@ -52,15 +52,19 @@ jboolean addAndCheckCapabilities(jvmtiEnv *jvmti) {
 void configEvent(jvmtiEnv *jvmti) {
     jint start = JVMTI_MIN_EVENT_TYPE_VAL;
     jint end = JVMTI_MAX_EVENT_TYPE_VAL;
-    for (int index = start ; index <= end; ++index) {
+
+    for (int index = start; index <= end; ++index) {
+        //部分机型崩溃
+        if (index == 72 || (index > 76 && index < 80)) {
+            continue;
+        }
         jvmtiError error = (*jvmti)->SetEventNotificationMode(jvmti, JVMTI_ENABLE,
                                                               (jvmtiEvent) index, NULL);
+        char log[GENERAL_LOG_LENGTH];
         if (error != JVMTI_ERROR_NONE) {
-            char log[GENERAL_LOG_LENGTH];
             sprintf(log, "config event %d error, error code is %d", index, error);
             loge(LOG_TAG, log);
         } else {
-            char log[GENERAL_LOG_LENGTH];
             sprintf(log, "config event %d yes", index);
             logi(LOG_TAG, log);
         }

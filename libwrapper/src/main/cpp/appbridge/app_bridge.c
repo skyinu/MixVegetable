@@ -203,9 +203,9 @@ void notifyMethodEntry(jthread thread, jmethodID method) {
         free(classSignature);
         return;
     }
-    char *methodMsg = malloc(sizeof(char) * 300);
-    char *methodName = malloc(sizeof(char) * 100);
-    char *methodSignature = malloc(sizeof(char) * 50);
+    char *methodMsg = malloc(sizeof(char) * 500);
+    char *methodName = malloc(sizeof(char) * 200);
+    char *methodSignature = malloc(sizeof(char) * 100);
     methodMsg[0] = '\0';
     (*globalJvmtiEnv)->GetMethodName(globalJvmtiEnv, method, &methodName, &methodSignature, NULL);
     strcat(methodMsg, "onMethodEntry ");
@@ -228,7 +228,7 @@ void notifyMethodExit(jthread thread, jmethodID method, jboolean was_popped_by_e
                       jvalue return_value) {
     jvmtiThreadInfo info;
     (*globalJvmtiEnv)->GetThreadInfo(globalJvmtiEnv, thread, &info);
-    char *classSignature = malloc(sizeof(char) * 150);
+    char *classSignature = malloc(sizeof(char) * 200);
     jclass declareClass;
     (*globalJvmtiEnv)->GetMethodDeclaringClass(globalJvmtiEnv, method, &declareClass);
     (*globalJvmtiEnv)->GetClassSignature(globalJvmtiEnv, declareClass, &classSignature, NULL);
@@ -236,9 +236,9 @@ void notifyMethodExit(jthread thread, jmethodID method, jboolean was_popped_by_e
         free(classSignature);
         return;
     }
-    char *methodMsg = malloc(sizeof(char) * 300);
-    char *methodName = malloc(sizeof(char) * 100);
-    char *methodSignature = malloc(sizeof(char) * 50);
+    char *methodMsg = malloc(sizeof(char) * 500);
+    char *methodName = malloc(sizeof(char) * 200);
+    char *methodSignature = malloc(sizeof(char) * 100);
     methodMsg[0] = '\0';
     (*globalJvmtiEnv)->GetMethodName(globalJvmtiEnv, method, &methodName, &methodSignature, NULL);
     strcat(methodMsg, "onMethodEntry ");
