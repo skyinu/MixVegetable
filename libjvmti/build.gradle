@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
 
     defaultConfig {
         minSdkVersion 28
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -24,7 +24,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            version '3.10.2'
+            version '3.22.1'
             path 'src/main/cpp/CMakeLists.txt'
         }
     }

@@ -1,2 +1,2 @@
-include ':app', ':libwrapper'
-rootProject.name='jvmtiwrapper-android'
+include ':app', ':libjvmti'
+include ':libfork'

@@ -13,7 +13,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         Thread({
             while (true){
-                Thread.sleep(3000)
+                Thread.sleep(30000)
                 Log.e("TAG_WRAPPER", "TAG " + Any())
             }
         }, "dede").start()
