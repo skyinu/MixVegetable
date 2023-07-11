@@ -94,6 +94,6 @@ class AppEventListenerImpl :ApplicationEventListener{
     }
 
     override fun onVMObjectAlloc(threadName: String?, name: String?) {
-        Log.e(LOG_TAG, "onVMObjectAlloc threadName = ${threadName}, name $name")
+//        Log.e(LOG_TAG, "onVMObjectAlloc threadName = ${threadName}, name $name")
     }
 }
