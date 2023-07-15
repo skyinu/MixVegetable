@@ -54,31 +54,31 @@ class AppEventListenerImpl :ApplicationEventListener{
     }
 
     override fun onMonitorWait(threadName: String?, timeout: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorWait name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
-        )
+//        Log.e(
+//            LOG_TAG,
+//            "onMonitorWait name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
+//        )
     }
 
     override fun onMonitorWaited(threadName: String?, timeout: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorWaited name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
-        )
+//        Log.e(
+//            LOG_TAG,
+//            "onMonitorWaited name = ${threadName}, monitorObj = $monitorObj timeout = $timeout"
+//        )
     }
 
     override fun onMonitorContendedEnter(threadName: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorContendedEnter name = ${threadName}, monitorObj = $monitorObj"
-        )
+//        Log.e(
+//            LOG_TAG,
+//            "onMonitorContendedEnter name = ${threadName}, monitorObj = $monitorObj"
+//        )
     }
 
     override fun onMonitorContendedEntered(threadName: String?, monitorObj: Any?) {
-        Log.e(
-            LOG_TAG,
-            "onMonitorContendedEntered name = ${threadName}, monitorObj = $monitorObj"
-        )
+//        Log.e(
+//            LOG_TAG,
+//            "onMonitorContendedEntered name = ${threadName}, monitorObj = $monitorObj"
+//        )
     }
 
     override fun onDataDumpRequest() {

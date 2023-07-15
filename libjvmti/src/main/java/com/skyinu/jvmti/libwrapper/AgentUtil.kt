@@ -33,7 +33,7 @@ object AgentUtil {
             ZipFile(context.applicationInfo.sourceDir)
                 .extractFile(soFileItem, copyDestPath.absolutePath)
             Debug.attachJvmtiAgent(
-                copyAgentSoPath + File.separator + soFileItem,
+                copyDestPath.absolutePath + File.separator + soFileItem,
                 context.packageResourcePath,
                 classLoader
             )
