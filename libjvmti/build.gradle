@@ -28,6 +28,14 @@ android {
             path 'src/main/cpp/CMakeLists.txt'
         }
     }
+    kotlinOptions {
+        jvmTarget = '1.6'
+        freeCompilerArgs += [
+                "-Xsam-conversions=class",
+                "-Xlambdas=class",
+                "-Xno-optimize"
+        ]
+    }
 
 }
 

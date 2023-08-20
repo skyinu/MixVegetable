@@ -1,15 +1,23 @@
 package com.skyinu.jvmti.wrapper
 
+import android.app.ActivityManager
+import android.app.Dialog
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Debug
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.os.Process
 import android.util.Log
 import android.view.View
 import com.example.nativelib.NativeLib
 import com.skyinu.jvmti.libwrapper.NativeTiBridge
 import kotlinx.android.synthetic.main.activity_main.*
+import java.util.Date
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,6 +25,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        EventCenter.register<MainActivity> {
+            Log.e("TAG1", "YES IT IS ")
+        }
         Thread({
             while (true) {
                 Thread.sleep(10000)
@@ -26,6 +37,44 @@ class MainActivity : AppCompatActivity() {
         tvHello.setOnClickListener {
             tvHello.text = "${NativeTiBridge.getObjectSize(this)}"
             doOnClick(it)
+        }
+        tvHello2.setOnClickListener {
+//            Log.e("TAG1", "hello worl".get(100)+"hhhh")
+            val dialog = Dialog(this)
+            dialog.setContentView(R.layout.dialog_main)
+            dialog.show()
+            Handler(Looper.myLooper()!!).postDelayed({
+                val intent = Intent(this, SecondActivity::class.java)
+                startActivity(intent)
+            }, 3000)
+        }
+        tvHello3.setOnClickListener {
+            val intent = Intent(this, SecondActivity::class.java)
+            startActivity(intent)
+            Handler(Looper.myLooper()!!).postDelayed({
+                val dialog = Dialog(this)
+                dialog.setContentView(R.layout.dialog_main)
+                dialog.show()
+            }, 3000)
+        }
+        val default = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            val activityService = this.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val list = activityService.getHistoricalProcessExitReasons(
+                    this.packageName,
+                    0,
+                    10
+                )
+                Log.e("TAG1", "hhhhh}" + this.packageName)
+                list.forEachIndexed { index, info ->
+                    Log.e(
+                        "TAG1", "$index -${Date(info.timestamp).toString()} ${info.description} -" +
+                                " ${info.processStateSummary.contentToString()}"
+                    )
+                }
+            }
+            default.uncaughtException(t, e)
         }
     }
 
@@ -58,6 +107,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun clickHello() {
+        val activityService = this.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            activityService.getHistoricalProcessExitReasons(this.packageName, Process.myPid(), 10)
+        }
 //        hitException()
     }
 
