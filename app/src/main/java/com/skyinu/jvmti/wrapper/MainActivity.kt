@@ -13,10 +13,11 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Process
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import com.example.nativelib.NativeLib
 import com.skyinu.jvmti.libwrapper.NativeTiBridge
-import kotlinx.android.synthetic.main.activity_main.*
+import com.skyinu.jvmti.wrapper.databinding.ActivityMainBinding
 import java.util.Date
 
 class MainActivity : AppCompatActivity() {
@@ -24,7 +25,8 @@ class MainActivity : AppCompatActivity() {
     private var count = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
+        setContentView(binding.root)
         EventCenter.register<MainActivity> {
             Log.e("TAG1", "YES IT IS ")
         }
@@ -34,11 +36,11 @@ class MainActivity : AppCompatActivity() {
                 Log.e("TAG1", "TAG:" + Process.myPid() + " vs " + Any())
             }
         }, "dede").start()
-        tvHello.setOnClickListener {
-            tvHello.text = "${NativeTiBridge.getObjectSize(this)}"
+        binding.tvHello.setOnClickListener {
+            binding.tvHello.text = "${NativeTiBridge.getObjectSize(this)}"
             doOnClick(it)
         }
-        tvHello2.setOnClickListener {
+        binding.tvHello2.setOnClickListener {
 //            Log.e("TAG1", "hello worl".get(100)+"hhhh")
             val dialog = Dialog(this)
             dialog.setContentView(R.layout.dialog_main)
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }, 3000)
         }
-        tvHello3.setOnClickListener {
+        binding.tvHello3.setOnClickListener {
             val intent = Intent(this, SecondActivity::class.java)
             startActivity(intent)
             Handler(Looper.myLooper()!!).postDelayed({
